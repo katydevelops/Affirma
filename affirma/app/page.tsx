@@ -1,17 +1,16 @@
+"use client";
+
 import { useEffect, useState } from 'react';
 import { getAffirmation } from './utils/fetchAffirmation';
+import Affirmation from './components/affirmation';
 import { Box, VStack, Text, Textarea, Button, Input } from '@chakra-ui/react';
 
 export default function Home() {
-  const [affirmation, setAffirmation] = useState<string>('');
+  //const [affirmation, setAffirmation] = useState<string>('');
   const [journalEntry, setJournalEntry] = useState<string>('');
   const [submitted, setSubmitted] = useState<boolean>(false);
 
-  useEffect(() => {
-    getAffirmation().then(setAffirmation);
-  }, []);
-
-  const handleSubmit = () => {
+ const handleSubmit = () => {
     setSubmitted(true);
     // Add functionality to save the journal entry
   };
@@ -38,13 +37,8 @@ export default function Home() {
       mx="auto"
       mt={12}
     >
-      <Text fontSize="2xl" fontWeight="bold" color="teal.600">
-        Daily Affirmation
-      </Text>
-      <Text fontSize="xl" color="gray.700">
-        {affirmation || 'Loading...'}
-      </Text>
-
+      <Affirmation />
+      
       <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
         <Textarea
           value={journalEntry}
