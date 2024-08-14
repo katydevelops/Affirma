@@ -1,16 +1,16 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/server';
 
 const API_URL = 'https://www.affirmations.dev';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export async function GET() {
   try {
     const response = await fetch(API_URL);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
-    res.status(200).json(data);
+    return NextResponse.json(data);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch affirmation' });
+    return NextResponse.json({ error: 'Failed to fetch affirmation' }, { status: 500 });
   }
 }

@@ -1,33 +1,33 @@
-import React, { useEffect, useState } from 'react';
-import { getAffirmation } from '../utils/fetchAffirmation';
+import { useEffect, useState } from 'react';
+import { getAffirmation } from '../utils/getAffirmation';
 
-export default function Affirmation() {
+const Affirmation = () => {
   const [affirmation, setAffirmation] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchData() {
       try {
         const data = await getAffirmation();
-        setAffirmation(data);
+        setAffirmation(data.affirmation);
       } catch (err) {
         setError('Failed to load affirmation');
-      } finally {
-        setLoading(false);
       }
     }
 
     fetchData();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   return (
     <div>
-      <h1>Daily Affirmation</h1>
-      <p>{affirmation}</p>
+      <h2>Your Daily Affirmation</h2>
+      {affirmation ? <p>{affirmation}</p> : <p>Loading...</p>}
     </div>
   );
-}
+};
+
+export default Affirmation;
