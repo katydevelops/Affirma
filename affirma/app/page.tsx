@@ -1,6 +1,8 @@
+'use client'
+
 import { Box, VStack, Text, Textarea, Button, Input } from '@chakra-ui/react';
-import ErrorBoundary from './components/ErrorBoundary';
 import Affirmation from './components/affirmation';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
   const [journalEntry, setJournalEntry] = useState<string>('');
@@ -22,7 +24,6 @@ export default function Home() {
   }
 
   return (
-    <ErrorBoundary>
       <Box
         minH="100vh"
         bgGradient="linear(to-r, pink.100, orange.100, pink.100)"
@@ -42,6 +43,7 @@ export default function Home() {
           mx="auto"
         >
           <Affirmation />
+
           <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
             <Textarea
               value={journalEntry}
@@ -67,6 +69,5 @@ export default function Home() {
           </form>
         </VStack>
       </Box>
-    </ErrorBoundary>
   );
 }

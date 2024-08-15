@@ -7,14 +7,12 @@ type RootLayoutProps = {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <ChakraProvider>
-      <html lang="en">
-        <body>
-          <div id="root">
-            {children}
-          </div>
-        </body>
-      </html>
-    </ChakraProvider>
+    <html lang="en">
+      <body>
+        <ChakraProvider>
+          {children}
+        </ChakraProvider>
+      </body>
+    </html>
   );
 }
