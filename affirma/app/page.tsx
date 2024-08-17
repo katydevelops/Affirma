@@ -23,9 +23,14 @@ export default function Home() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleSubmit = () => {
-    onOpen(); // Open the modal when the form is submitted
-    // Add functionality to save the journal entry
+    onOpen(); 
+    setJournalEntry('');
   };
+
+  const handleClose = () => {
+    setJournalEntry('');
+    onClose();
+  }
 
   return (
       <Box
