@@ -78,7 +78,7 @@ export default function Home() {
         </VStack>
 
         {/* Modal */}
-        <Modal isOpen={isOpen} onClose={onClose} isCentered>
+        <Modal isOpen={isOpen} onClose={handleClose} isCentered>
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Thank You!</ModalHeader>
