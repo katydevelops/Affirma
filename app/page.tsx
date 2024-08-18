@@ -17,14 +17,28 @@ import {
 } from '@chakra-ui/react';
 import Affirmation from './components/affirmation';
 import { useEffect, useState } from 'react';
+import { supabase } from './utils/supabaseClient'
 
 export default function Home() {
   const [journalEntry, setJournalEntry] = useState<string>('');
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [submitted, setSubmitted ] = useState<boolean>(false);
 
-  const handleSubmit = () => {
-    onOpen(); 
-    setJournalEntry('');
+  const handleSubmit = async () => {
+    onOpen();
+    try {
+      const { data, error } = await supabase
+        .from('journal_entries')
+        .insert([{ entry: journalEntry}]);
+
+        if (error) throw error;
+
+        setJournalEntry('');
+        setSubmitted(true);
+    } catch (error) {
+      console.error('Error submitting journal entry: ', error);
+      setSubmitted(false);
+    }
   };
 
   const handleClose = () => {
