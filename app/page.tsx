@@ -16,13 +16,15 @@ import {
   ModalFooter,
 } from '@chakra-ui/react';
 import Affirmation from './components/affirmation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
 import { supabase } from './utils/supabaseClient'
 
 export default function Home() {
   const [journalEntry, setJournalEntry] = useState<string>('');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [submitted, setSubmitted ] = useState<boolean>(false);
+  const router = useRouter();
 
   const handleSubmit = async () => {
     onOpen();
@@ -31,19 +33,20 @@ export default function Home() {
         .from('journal_entries')
         .insert([{ entry: journalEntry}]);
 
-        if (error) throw error;
+      if (error) throw error;
 
-        setJournalEntry('');
-        setSubmitted(true);
+      setJournalEntry('');
+      setSubmitted(true);
     } catch (error) {
       console.error('Error submitting journal entry: ', error);
       setSubmitted(false);
     }
   };
 
-  const handleClose = () => {
-    setJournalEntry('');
+  const handleModalClose = () => {
     onClose();
+    setJournalEntry('');
+    router.push('/feed');
   }
 
   return (
@@ -92,7 +95,7 @@ export default function Home() {
         </VStack>
 
         {/* Modal */}
-        <Modal isOpen={isOpen} onClose={handleClose} isCentered>
+        <Modal isOpen={isOpen} onClose={handleModalClose} isCentered>
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Thank You!</ModalHeader>
@@ -102,7 +105,7 @@ export default function Home() {
               </Text>
             </ModalBody>
             <ModalFooter>
-              <Button colorScheme="orange" onClick={onClose}>
+              <Button colorScheme="orange" onClick={handleModalClose}>
                 Close
               </Button>
             </ModalFooter>
