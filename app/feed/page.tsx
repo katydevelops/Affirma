@@ -6,12 +6,22 @@ import { Box, VStack, Text } from '@chakra-ui/react';
 
 export default function Feed() {
   const [entries, setEntries] = useState<{ id: number, entry: string, created_at: string }[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchEntries = async () => {
+      const user = supabase.auth.user();
+      
+      if (!user) {
+        console.error('User is not authenticated');
+        setLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('journal_entries')
         .select('*')
+        .eq('user_id', user.id) // Filter by the authenticated user's ID
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -19,10 +29,19 @@ export default function Feed() {
       } else {
         setEntries(data || []);
       }
+      setLoading(false);
     };
 
     fetchEntries();
   }, []);
+
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (!entries.length) {
+    return <Text>No journal entries found.</Text>;
+  }
 
   return (
     <Box p={4}>
