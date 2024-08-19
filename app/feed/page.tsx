@@ -10,18 +10,22 @@ export default function Feed() {
 
   useEffect(() => {
     const fetchEntries = async () => {
-      const user = supabase.auth.user();
-      
-      if (!user) {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session?.user) {
         console.error('User is not authenticated');
         setLoading(false);
         return;
       }
 
+      const userId = session.user.id;
+
       const { data, error } = await supabase
         .from('journal_entries')
         .select('*')
-        .eq('user_id', user.id) // Filter by the authenticated user's ID
+        .eq('user_id', userId) // Filter by the authenticated user's ID
         .order('created_at', { ascending: false });
 
       if (error) {
