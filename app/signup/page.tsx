@@ -1,9 +1,7 @@
-'use client';
-
 import { useState } from 'react';
-import { supabase } from '../utils/supabaseClient';
-import { Box, Input, Button, VStack, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
+import { signUp } from '../utils/auth';
+import { Box, Input, Button, VStack, Text } from '@chakra-ui/react';
 
 export default function SignUp() {
   const [email, setEmail] = useState<string>('');
@@ -14,16 +12,11 @@ export default function SignUp() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { user, error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-
-    if (error) {
+    try {
+      await signUp(email, password);
+      router.push('/');  // Redirect after successful sign-up
+    } catch (error: any) {
       setError(error.message);
-    } else {
-      // Redirect the user to another page after successful sign up
-      router.push('/');  // Change '/' to wherever you want to redirect the user
     }
   };
 
