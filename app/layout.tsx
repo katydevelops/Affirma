@@ -10,6 +10,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="en">
       <body>
         <ChakraProvider>
+          <Navbar />
           {children}
         </ChakraProvider>
       </body>
