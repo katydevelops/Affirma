@@ -1,5 +1,6 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import { ReactNode } from 'react';
+import Navbar from './components/navbar';
 
 type RootLayoutProps = {
   children: ReactNode;

@@ -1,20 +1,28 @@
 'use client';
 
 import Link from 'next/link';
-import { Box, Flex, HStack, Link as ChakraLink, Text } from '@chakra-ui/react';
+import { Box, Flex, HStack, Link as ChakraLink } from '@chakra-ui/react';
 
 export default function Navbar() {
   return (
-    <Box bg="orange.500" px={4}>
+    <Box as="nav"
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      p={4}
+      bg="transparent"
+      position="relative"
+      zIndex={1} // Ensures that the navbar is layered on top of the background
+    >
       <Flex h={16} alignItems="center" justifyContent="center">
         <HStack as="nav" spacing={8}>
-          <ChakraLink as={Link} href="/" color="white">
+          <ChakraLink as={Link} href="/" color="darkorange" fontWeight="bold">
             Home
           </ChakraLink>
-          <ChakraLink as={Link} href="/feed" color="white">
+          <ChakraLink as={Link} href="/feed" color="darkorange" fontWeight="bold">
             Feed
           </ChakraLink>
-          <ChakraLink as={Link} href="/profile" color="white">
+          <ChakraLink as={Link} href="/profile" color="darkorange" fontWeight="bold">
             Profile
           </ChakraLink>
         </HStack>
