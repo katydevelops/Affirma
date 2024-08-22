@@ -12,7 +12,7 @@ export default function Navbar() {
       p={4}
       bg="transparent"
       position="relative"
-      zIndex={1} // Ensures that the navbar is layered on top of the background
+      zIndex={1} 
     >
       <Flex h={16} alignItems="center" justifyContent="center">
         <HStack as="nav" spacing={8}>

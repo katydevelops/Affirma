@@ -8,8 +8,18 @@ const Affirmation = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const data = await getAffirmation();
-        setAffirmation(data.affirmation);
+        const storedDate = localStorage.getItem('affirmationDate');
+        const storedAffirmation = localStorage.getItem('affirmation');
+        const today = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+
+        if (storedDate === today && storedAffirmation) {
+          setAffirmation(storedAffirmation);
+        } else {
+          const data = await getAffirmation();
+          setAffirmation(data.affirmation);
+          localStorage.setItem('affirmation', data.affirmation);
+          localStorage.setItem('affirmationDate', today);
+        }
       } catch (err) {
         setError('Failed to load affirmation');
       }
