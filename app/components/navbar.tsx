@@ -25,8 +25,9 @@ export default function Navbar() {
           <ChakraLink as={Link} href="/profile" color="darkorange" fontWeight="bold">
             Profile
           </ChakraLink>
+                  <ChakraLink as={Link} href="/login" color="darkorange" fontWeight="bold">Sign In</ChakraLink>
         </HStack>
-        <ChakraLink as={Link} href="/login" color="darkorange" fontWeight="bold">Sign In</ChakraLink>
+
       </Flex>
     </Box>
   );

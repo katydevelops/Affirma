@@ -1,20 +1,23 @@
+'use client'
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { signUp } from '../utils/auth';
-import { Box, Input, Button, VStack, Text } from '@chakra-ui/react';
+import { signIn } from '../utils/auth';
+import { Box, Input, Button, VStack, Text, Link as ChakraLink } from '@chakra-ui/react';
+import Link from 'next/link';
 
-export default function SignUp() {
+export default function Login() {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleSignUp = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      await signUp(email, password);
-      router.push('/');  // Redirect after successful sign-up
+      await signIn(email, password);
+      router.push('/');  // Redirect after successful login
     } catch (error: any) {
       setError(error.message);
     }
@@ -38,10 +41,10 @@ export default function SignUp() {
         mx="auto"
       >
         <Text fontSize="2xl" fontWeight="bold">
-          Sign Up
+          Log In
         </Text>
         {error && <Text color="red.500">{error}</Text>}
-        <form onSubmit={handleSignUp}>
+        <form onSubmit={handleLogin}>
           <VStack spacing={4}>
             <Input
               placeholder="Email"
@@ -58,10 +61,16 @@ export default function SignUp() {
               required
             />
             <Button type="submit" colorScheme="orange" size="md" width="100%">
-              Sign Up
+              Log In
             </Button>
           </VStack>
         </form>
+        <Text fontSize="sm" color="gray.500" mt={4}>
+          Don&apos;t have an account?{' '}
+          <ChakraLink as={Link} href="/signup" color="orange.500">
+            Sign Up
+          </ChakraLink>
+        </Text>
       </VStack>
     </Box>
   );
