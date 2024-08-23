@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn } from '../utils/auth';
-import { Box, Input, Button, VStack, Text } from '@chakra-ui/react';
+import { Box, Input, Button, VStack, Text, Link as ChakraLink } from '@chakra-ui/react';
+import Link from 'next/link';
 
 export default function Login() {
   const [email, setEmail] = useState<string>('');
@@ -64,6 +65,12 @@ export default function Login() {
             </Button>
           </VStack>
         </form>
+        <Text fontSize="sm" color="gray.500" mt={4}>
+          Don&apos;t have an account?{' '}
+          <ChakraLink as={Link} href="/signup" color="orange.500">
+            Sign Up
+          </ChakraLink>
+        </Text>
       </VStack>
     </Box>
   );
