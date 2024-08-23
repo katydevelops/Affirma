@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signUp } from '../utils/auth';
@@ -5,32 +7,41 @@ import { supabase } from '../utils/supabaseClient'; // Importing supabase
 import { Box, Input, Button, VStack, Text } from '@chakra-ui/react';
 
 export default function SignUp() {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
   const [username, setUsername] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    try {
-      await signUp(email, password);
-      // Store additional user details
-      await supabase
-        .from('users')
-        .update({
-          first_name: firstName,
-          last_name: lastName,
-          phone: phone,
-          username: username,
-        })
-        .eq('email', email);
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
 
-      router.push('/');  // Redirect after successful sign-up
+    try {
+      const { data, error } = await signUp({
+        email,
+        password,
+        options: {
+          data: {
+            firstName,
+            lastName,
+            phone,
+            username,
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      router.push('/');
     } catch (error: any) {
       setError(error.message);
     }
@@ -97,6 +108,13 @@ export default function SignUp() {
               type="password"
               required
             />
+            <Input
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            type="password"
+            required
+            /> 
             <Button type="submit" colorScheme="orange" size="md" width="100%">
               Sign Up
             </Button>
