@@ -1,14 +1,26 @@
 import { supabase } from './supabaseClient';
 
 // Sign Up Function
-export async function signUp(email: string, password: string) {
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-  });
+export async function signUp(email: string, password: string, additionalData: any) {
+  const { user, error } = await supabase.auth.signUp({ email, password });
 
-  if (error) throw error;
-  return data;
+  if (error) {
+    throw error;
+  }
+
+  if (user) {
+    // Store additional data in the database
+    const { error: updateError } = await supabase
+      .from('users')
+      .update(additionalData)
+      .eq('id', user.id);
+
+    if (updateError) {
+      throw updateError;
+    }
+  }
+
+  return user;
 }
 
 // Login Function

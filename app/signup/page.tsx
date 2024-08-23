@@ -1,39 +1,35 @@
-'use client'
-
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signUp } from '../utils/auth';
-import { Box, Input, Button, VStack, Text, Link as ChakraLink } from '@chakra-ui/react';
-import Link from 'next/link';
+import { supabase } from '../utils/supabaseClient'; // Importing supabase
+import { Box, Input, Button, VStack, Text } from '@chakra-ui/react';
 
 export default function SignUp() {
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
   const [username, setUsername] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
     try {
-      await signUp({
-        firstName,
-        lastName,
-        phone,
-        email,
-        username,
-        password
-      });
+      await signUp(email, password);
+      // Store additional user details
+      await supabase
+        .from('users')
+        .update({
+          first_name: firstName,
+          last_name: lastName,
+          phone: phone,
+          username: username,
+        })
+        .eq('email', email);
+
       router.push('/');  // Redirect after successful sign-up
     } catch (error: any) {
       setError(error.message);
@@ -58,7 +54,7 @@ export default function SignUp() {
         mx="auto"
       >
         <Text fontSize="2xl" fontWeight="bold">
-          Register
+          Sign Up
         </Text>
         {error && <Text color="red.500">{error}</Text>}
         <form onSubmit={handleSignUp}>
@@ -67,21 +63,24 @@ export default function SignUp() {
               placeholder="First Name"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              type="text"
               required
             />
             <Input
               placeholder="Last Name"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              type="text"
               required
             />
             <Input
               placeholder="Phone"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              type="tel"
+              required
+            />
+            <Input
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
             <Input
@@ -92,23 +91,9 @@ export default function SignUp() {
               required
             />
             <Input
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              type="text"
-              required
-            />
-            <Input
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              type="password"
-              required
-            />
-            <Input
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
               type="password"
               required
             />
@@ -117,12 +102,6 @@ export default function SignUp() {
             </Button>
           </VStack>
         </form>
-        <Text fontSize="sm" color="gray.500" mt={4}>
-          Already have an account?{' '}
-          <ChakraLink as={Link} href="/login" color="orange.500">
-            Log In
-          </ChakraLink>
-        </Text>
       </VStack>
     </Box>
   );
