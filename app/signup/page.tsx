@@ -20,32 +20,33 @@ export default function SignUp() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
+  if (password !== confirmPassword) {
+    setError('Passwords do not match');
+    return;
+  }
 
-    try {
-      const { data, error } = await signUp({
-        email,
-        password,
-        options: {
-          data: {
-            firstName,
-            lastName,
-            phone,
-            username,
-          },
-        },
-      });
+  try {
+const { data, error } = await supabase.auth.signUp({
+  email: email,
+  password: password,
+  options: {
+    data: {
+      username: username,
+      first_name: firstName,
+      last_name: lastName,
+      phone: phone,
+    },
+  },
+});
 
-      if (error) throw error;
 
-      router.push('/');
-    } catch (error: any) {
-      setError(error.message);
-    }
-  };
+    if (error) throw error;
+
+    router.push('/');
+  } catch (error: any) {
+    setError(error.message);
+  }
+};
 
   return (
     <Box

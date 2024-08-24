@@ -1,8 +1,9 @@
-'use client'
+'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn } from '../utils/auth';
+import { supabase } from '../utils/supabaseClient'; // Importing supabase
 import { Box, Input, Button, VStack, Text, Link as ChakraLink } from '@chakra-ui/react';
 import Link from 'next/link';
 
@@ -16,7 +17,13 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      await signIn(email, password);
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
       router.push('/');  // Redirect after successful login
     } catch (error: any) {
       setError(error.message);
