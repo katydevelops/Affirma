@@ -9,8 +9,6 @@ import { Box, Input, Button, VStack, Text } from '@chakra-ui/react';
 export default function SignUp() {
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
-  const [phone, setPhone] = useState<string>('');
-  const [username, setUsername] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
@@ -31,10 +29,8 @@ const { data, error } = await supabase.auth.signUp({
   password: password,
   options: {
     data: {
-      username: username,
       first_name: firstName,
       last_name: lastName,
-      phone: phone,
     },
   },
 });
@@ -81,18 +77,6 @@ const { data, error } = await supabase.auth.signUp({
               placeholder="Last Name"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
-              required
-            />
-            <Input
-              placeholder="Phone"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
-            />
-            <Input
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
               required
             />
             <Input

@@ -26,22 +26,32 @@ export default function Home() {
   const [submitted, setSubmitted] = useState<boolean>(false);
   const router = useRouter();
 
-  const handleSubmit = async () => {
-    onOpen();
-    try {
-      const { data, error } = await supabase
-        .from('journal_entries')
-        .insert([{ entry: journalEntry }]);
 
-      if (error) throw error;
-
-      setJournalEntry('');
-      setSubmitted(true);
-    } catch (error) {
-      console.error('Error submitting journal entry: ', error);
-      setSubmitted(false);
+const handleSubmit = async () => {
+  onOpen();
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session?.user) {
+      throw new Error("User not authenticated");
     }
-  };
+
+    const { data, error } = await supabase
+      .from('journal_entries')
+      .insert([{ entry: journalEntry, user_id: session.user.id }]);
+
+    if (error) throw error;
+
+    setJournalEntry('');
+    setSubmitted(true);
+  } catch (error) {
+    console.error('Error submitting journal entry: ', error);
+    setSubmitted(false);
+  }
+};
+
+
+
 
   const handleModalClose = () => {
     onClose();
