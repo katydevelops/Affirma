@@ -6,20 +6,18 @@ export async function GET() {
   console.log("Fetching a new affirmation from the external API...");
   try {
     const response = await fetch(API_URL);
-
-    console.log("External API Response Status:", response.status);
+    const data = await response.json();
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const data = await response.json();
-    console.log("Received data from external API:", data);
-
-    // Return the response with Cache-Control headers to prevent caching
+    // Return the response with strict Cache-Control headers
     return new NextResponse(JSON.stringify(data), {
       headers: {
         'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
         'Content-Type': 'application/json',
       },
     });
