@@ -26,33 +26,36 @@ export default function Home() {
   const [submitted, setSubmitted] = useState<boolean>(false);
   const router = useRouter();
 
+  // Handle submission of the journal entry
+  const handleSubmit = async () => {
+    onOpen();
+    try {
+      // Fetch the current session to get the user ID
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      // Check if the user is authenticated
+      if (!session?.user) {
+        throw new Error("User not authenticated");
+      }
 
-const handleSubmit = async () => {
-  onOpen();
-  try {
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (!session?.user) {
-      throw new Error("User not authenticated");
+      // Insert the journal entry into the database, associating it with the user's ID
+      const { data, error } = await supabase
+        .from('journal_entries')
+        .insert([{ entry: journalEntry, user_id: session.user.id }]);
+
+      // Handle any errors from the insert operation
+      if (error) throw error;
+
+      // Clear the journal entry input and mark as submitted
+      setJournalEntry('');
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Error submitting journal entry: ', error);
+      setSubmitted(false);
     }
+  };
 
-    const { data, error } = await supabase
-      .from('journal_entries')
-      .insert([{ entry: journalEntry, user_id: session.user.id }]);
-
-    if (error) throw error;
-
-    setJournalEntry('');
-    setSubmitted(true);
-  } catch (error) {
-    console.error('Error submitting journal entry: ', error);
-    setSubmitted(false);
-  }
-};
-
-
-
-
+  // Handle closing the modal and navigating to the feed page
   const handleModalClose = () => {
     onClose();
     setJournalEntry('');
@@ -78,7 +81,10 @@ const handleSubmit = async () => {
         maxW="lg"
         mx="auto"
       >
+        {/* Component to display the daily affirmation */}
         <Affirmation />
+
+        {/* Journal entry form */}
         <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
           <Textarea
             value={journalEntry}
@@ -104,7 +110,7 @@ const handleSubmit = async () => {
         </form>
       </VStack>
 
-      {/* Modal */}
+      {/* Modal to display after submission */}
       <Modal isOpen={isOpen} onClose={handleModalClose} isCentered>
         <ModalOverlay />
         <ModalContent>

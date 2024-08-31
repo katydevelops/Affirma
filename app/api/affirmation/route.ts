@@ -5,14 +5,23 @@ const API_URL = 'https://www.affirmations.dev';
 export async function GET() {
   console.log("Fetching a new affirmation from the external API...");
   try {
-    const response = await fetch(API_URL);
-    const data = await response.json();
+    // Append a timestamp to bust any potential caches in the external API
+    const response = await fetch(`${API_URL}?timestamp=${new Date().getTime()}`, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'If-None-Match': '', // Ignore ETag for this request
+      }
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    // Return the response with strict Cache-Control headers
+    const data = await response.json();
+    console.log("Received data from external API:", data);
+
     return new NextResponse(JSON.stringify(data), {
       headers: {
         'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',

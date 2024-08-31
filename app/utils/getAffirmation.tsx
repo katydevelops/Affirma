@@ -3,10 +3,11 @@ export async function getAffirmation() {
     method: 'GET',
     headers: {
       'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-      'Pragma': 'no-cache', // Fallback for older HTTP/1.0 caches
-      'Expires': '0',       // Another fallback
+      'Pragma': 'no-cache',
+      'Expires': '0',
+      'If-None-Match': '', 
     },
-    cache: 'no-store',       // Ensure fetch itself doesn't cache the response
+    cache: 'no-store',
   });
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
