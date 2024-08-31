@@ -5,22 +5,19 @@ const Affirmation = () => {
   const [affirmation, setAffirmation] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-useEffect(() => {
-  async function fetchData() {
-    try {
-      // Introduce a small delay to avoid rate-limiting issues
-      await new Promise(resolve => setTimeout(resolve, 500));
-      const data = await getAffirmation();
-      setAffirmation(data.affirmation);
-    } catch (err) {
-      console.error('Failed to load affirmation', err);
-      setError('Failed to load affirmation');
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const data = await getAffirmation();
+        setAffirmation(data.affirmation);
+      } catch (err) {
+        console.error('Failed to load affirmation', err);
+        setError('Failed to load affirmation');
+      }
     }
-  }
 
-  fetchData();
-}, []);
-
+    fetchData();
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   if (error) {
     return <p>{error}</p>;
