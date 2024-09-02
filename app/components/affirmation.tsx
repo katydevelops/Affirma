@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { getAffirmation } from '../utils/getAffirmation';
 
-const Affirmation = () => {
-  const [affirmation, setAffirmation] = useState<string | null>(null);
+const Affirmation = ({ setAffirmation }) => {
+  const [localAffirmation, setLocalAffirmation] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
 useEffect(() => {
@@ -12,6 +12,7 @@ useEffect(() => {
       await new Promise(resolve => setTimeout(resolve, 500));
       
       const data = await getAffirmation();
+      setLocalAffirmation(data.affirmation);
       setAffirmation(data.affirmation);
     } catch (err) {
       console.error('Failed to load affirmation', err);
@@ -20,7 +21,7 @@ useEffect(() => {
   }
 
   fetchData();
-}, []);
+}, [setAffirmation]);
 
 
   if (error) {
@@ -30,7 +31,7 @@ useEffect(() => {
   return (
     <div>
       <h2>Your Daily Affirmation</h2>
-      {affirmation ? <p>{affirmation}</p> : <p>Loading...</p>}
+      {localAffirmation ? <p>{localAffirmation}</p> : <p>Loading...</p>}
     </div>
   );
 };

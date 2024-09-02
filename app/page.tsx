@@ -18,10 +18,11 @@ import {
 import Affirmation from './components/affirmation';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from './utils/supabaseClient'
+import { supabase } from './utils/supabaseClient';
 
 export default function Home() {
   const [journalEntry, setJournalEntry] = useState<string>('');
+  const [affirmation, setAffirmation] = useState<string | null>(null); // Using the state for affirmation
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [submitted, setSubmitted] = useState<boolean>(false);
   const router = useRouter();
@@ -30,25 +31,31 @@ export default function Home() {
   const handleSubmit = async () => {
     onOpen();
     try {
-      // Fetch the current session to get the user ID
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      // Check if the user is authenticated
+      const { data: sessionData } = await supabase.auth.getSession();
+      const session = sessionData?.session;
+
       if (!session?.user) {
         throw new Error("User not authenticated");
       }
 
-      // Insert the journal entry into the database, associating it with the user's ID
+      // Use the affirmation stored in state
+      const currentAffirmation = affirmation;
+
       const { data, error } = await supabase
         .from('journal_entries')
-        .insert([{ entry: journalEntry, user_id: session.user.id }]);
+        .insert([
+          {
+            entry: journalEntry,
+            user_id: session.user.id,
+            affirmation: currentAffirmation, // Save the dynamic affirmation
+          },
+        ]);
 
-      // Handle any errors from the insert operation
       if (error) throw error;
 
-      // Clear the journal entry input and mark as submitted
       setJournalEntry('');
       setSubmitted(true);
+      router.push('/feed');
     } catch (error) {
       console.error('Error submitting journal entry: ', error);
       setSubmitted(false);
@@ -82,7 +89,7 @@ export default function Home() {
         mx="auto"
       >
         {/* Component to display the daily affirmation */}
-        <Affirmation />
+        <Affirmation setAffirmation={setAffirmation} />
 
         {/* Journal entry form */}
         <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
